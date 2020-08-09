@@ -1,0 +1,12 @@
+{
+    "name": "carlos/api-mini-twitter",
+    "require": {
+        "firebase/php-jwt": "^5.2"
+    },
+    "authors": [
+        {
+            "name": "ahuacate15",
+            "email": "carlos.itca@gmail.com"
+        }
+    ]
+}
