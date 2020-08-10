@@ -10,12 +10,6 @@ class RouteHTTP {
 
     private const BASE_URL = '/api-mini-twitter';
 
-    public const OK = 200;
-    public const UNAUTHORIZED = 401;
-    public const BAD_REQUEST = 400;
-    public const NOT_FOUND = 404;
-    public const INTERNAL_SERVER_ERROR = 500;
-
     public function __construct() {
         $this->routes = array();
     }
@@ -25,6 +19,11 @@ class RouteHTTP {
     * en este punto no se ha hecho en enrutamiento
     */
     public function addRoute($method, $url, $action) {
+
+        /* valido que los parametros no sean null*/
+        if($method == null || $url == null || $action == null)
+          return;
+
         array_push($this->routes, array(
             'method' => $method,
             'url' => SELF::BASE_URL.''.$url,
@@ -50,6 +49,13 @@ class RouteHTTP {
     */
     private function getRouterInfo($method, $uri) {
 
+        /*
+        * esta funcion debe ser invocada despues de enroute, si
+        * es llamada antes, agrego validacion para evitar runtime error
+        */
+        if($this->dispatcher == null)
+          return null;
+
         // Strip query string (?foo=bar) and decode URI
         if (false !== $pos = strpos($uri, '?')) {
             $uri = substr($uri, 0, $pos);
@@ -65,6 +71,13 @@ class RouteHTTP {
     public function isAuthorizedRoute($method, $uri) {
         $routeInfo = $this->getRouterInfo($method, $uri);
 
+        /*
+        * esta funcion debe ser invocada despues de enroute, si
+        * es llamada antes, agrego validacion para evitar runtime error
+        */
+        if($routeInfo == null)
+          return null;
+
         if($routeInfo[0] == FastRoute\Dispatcher::NOT_FOUND || $routeInfo[0] == FastRoute\Dispatcher::METHOD_NOT_ALLOWED)
             return false;
 
@@ -79,8 +92,11 @@ class RouteHTTP {
 
     public function execCallback() {
         $callback = $this->callback;
-        $callback();
+        return $callback();
     }
 
+    public function getRoutes() {
+        return $this->routes;
+    }
 }
 ?>
