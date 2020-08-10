@@ -2,8 +2,11 @@
 
 ## Autenticacion de usuario
 
-| Metodo | Punto de acceso | Solicitud | Respuesta |
+
+
+| Método | Punto de acceso | Descripción |
 | --- | --- | --- | --- |
-| POST | ``/auth/login`` |  ```{ username : "var", email : "var@foo", "password" : "foo"}``` |  ```{ username : "var", jwt : "jwt_token" }``` |
+| POST | ``/auth/login`` | Autorizar inicios de sesión |
+| POST | ``/auth/signup`` | Registrar un usuario en la aplicación |
 
 ## Usuarios
