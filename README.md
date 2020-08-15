@@ -13,7 +13,7 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 | Método | Punto de acceso | Descripción |
 | --- | --- | --- |
 | POST | ``/auth/login`` | autorizar inicios de sesión |
-| POST | [``/auth/signup``](#/auth/signup) | registrar un usuario en la aplicación |
+| POST | [``/auth/signup``](#authsignup) | registrar un usuario en la aplicación |
 
 
 ## Detalle de las rutas
