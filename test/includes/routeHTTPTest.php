@@ -52,5 +52,25 @@ class routeHTTPTest extends TestCase {
         $instance->isAuthorizedRoute('POST', '/api-mini-twitter/auth');
         $this->assertEquals(100, $instance->execCallback());
     }
+
+    /**
+    * @depends testInstance
+    */
+    public function testExecCallbackWithService($instance) {
+
+        $instance->addRoute('GET', '/auth/{id:\d+}', function($params, $service) {
+            $id = $params['id'];
+            return $service($id, 2);
+        });
+
+        $instance->setService(function($a, $b) {
+          return $a + $b;
+        });
+
+        $instance->enroute();
+        $instance->isAuthorizedRoute('GET', '/api-mini-twitter/auth/2');
+        $this->assertEquals(4, $instance->execCallback());
+
+    }
 }
 ?>
