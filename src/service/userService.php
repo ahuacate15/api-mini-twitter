@@ -24,10 +24,13 @@ class UserService {
         if($password == '' || $password == null)
             return $this->response->textResponse(ResponseHTTP::BAD_REQUEST, 'Falta el password');
 
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+            return $this->response->textResponse(ResponseHTTP::BAD_REQUEST, 'El formato de correo es incorrecto');
+
         $userEntity = new UserEntity();
         $userEntity->userName = $userName;
         $userEntity->email = $email;
-        $userEntity->passwordHash = $password;
+        $userEntity->passwordHash = password_hash($password, CRYPT_BLOWFISH);
 
         switch ($this->userDao->saveUser($userEntity)) {
             case Connection::OK:
