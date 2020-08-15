@@ -7,6 +7,8 @@ class RouteHTTP {
     private $dispatcher;
 
     private $callback; /* callback asociado a ruta de la API */
+    private $pathParams; /* variables incluidas en la url, ejemplo: /user/{id} */
+    private $service; /* service invocado desde el callback */
 
     private const BASE_URL = '/api-mini-twitter';
 
@@ -84,6 +86,7 @@ class RouteHTTP {
         if($routeInfo[0] == FastRoute\Dispatcher::FOUND) {
             /* obtengo el callback asociado a la ruta */
             $this->callback = $routeInfo[1];
+            $this->pathParams = $routeInfo[2];
             return true;
         }
 
@@ -92,11 +95,15 @@ class RouteHTTP {
 
     public function execCallback() {
         $callback = $this->callback;
-        return $callback();
+        return $callback($this->pathParams, $this->service);
     }
 
     public function getRoutes() {
         return $this->routes;
+    }
+
+    public function setService($service) {
+        $this->service = $service;
     }
 }
 ?>

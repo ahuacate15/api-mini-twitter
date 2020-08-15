@@ -6,10 +6,13 @@ class Connection {
     private const USER = "root";
     private const PASSWORD = "root";
 
+    /* constantes de estado para una consulta */
     public const DUPLICATE_ROW = 1062;
     public const TABLE_NOT_EXIST = 1146;
     public const COLUMNS_DOESNT_MATCH = 1136;
     public const INCORRECT_DATETIME_VALUE = 1292;
+    public const ERROR_PARAMS = 0;
+    public const OK = -1;
 
     private $conn;
 
@@ -24,21 +27,23 @@ class Connection {
         return $statement->fetchAll();
     }
 
+    /*
+    * regresa alguna de las constantes de estado definidas
+    * al inicio de la clase
+    */
     public function execute($sql, $params) {
         try {
             $statement = $this->conn->prepare($sql);
 
             if($params != null) {
-                $totalParams = count($params);
-
-                for($i=0; $i<$totalParams; $i++) {
-                    $statement->bindValue(':'.$params[$i]['name'], $params[$i]['value']);
+                foreach($params as $paramName => $value) {
+                    $statement->bindValue(':'.$paramName, $value);
                 }
             }
+
             $statement->execute();
-            return true;
+            return self::OK;
         } catch(PDOException $e) {
-            echo json_encode($e)."<br />";
             return $e->errorInfo[1];
         }
 
