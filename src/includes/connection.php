@@ -14,34 +14,41 @@ class Connection {
     public const ERROR_PARAMS = 0;
     public const OK = -1;
 
-    private $conn;
+    protected $conn;
+    private $statement;
 
     public function __construct() {
         $this->conn = new PDO('mysql:host='.SELF::HOST.';dbname='.SELF::DB, SELF::USER, SELF::PASSWORD);
         $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    public function fetchAll($sql) {
-        $statement = $this->conn->prepare($sql);
-        $statement->execute();
-        return $statement->fetchAll();
+    protected function setQuery($sql) {
+        $this->statement = $this->conn->prepare($sql);
+        return $this;
+    }
+
+    protected function setInteger($param, $value) {
+        $this->statement->bindValue(':'.$param, $value, PDO::PARAM_INT);
+        return $this;
+    }
+
+    protected function setString($param, $value) {
+        $this->statement->bindValue(':'.$param, $value, PDO::PARAM_STR);
+        return $this;
+    }
+
+    protected function fetch() {
+        $this->statement->execute();
+        return $this->statement->fetch(PDO::FETCH_ASSOC);
     }
 
     /*
     * regresa alguna de las constantes de estado definidas
     * al inicio de la clase
     */
-    public function execute($sql, $params) {
+    public function execute() {
         try {
-            $statement = $this->conn->prepare($sql);
-
-            if($params != null) {
-                foreach($params as $paramName => $value) {
-                    $statement->bindValue(':'.$paramName, $value);
-                }
-            }
-
-            $statement->execute();
+            $this->statement->execute();
             return self::OK;
         } catch(PDOException $e) {
             return $e->errorInfo[1];

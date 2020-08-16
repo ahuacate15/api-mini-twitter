@@ -95,7 +95,7 @@ class RouteHTTP {
 
     public function execCallback() {
         $callback = $this->callback;
-        return $callback($this->pathParams, $this->service);
+        return $callback($this->service, $this->pathParams);
     }
 
     public function getRoutes() {

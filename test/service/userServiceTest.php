@@ -12,6 +12,34 @@ class userServiceTest extends TestCase {
     /**
     * @depends testInstance
     */
+    public function testLogin($instance) {
+        $this->assertEquals(ResponseHTTP::OK, $instance->login('admin', '12345')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->login('admin@test.gob', '12345')->statusCode);
+
+        $object = $instance->login('admin', '12345');
+        $this->assertArrayHasKey('message', $object->object);
+        $this->assertArrayHasKey('userName', $object->object);
+        $this->assertArrayHasKey('email', $object->object);
+        $this->assertArrayHasKey('jwt', $object->object);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testLoginUserNotExist($instance) {
+        $this->assertEquals(ResponseHTTP::NOT_FOUND, $instance->login('bad_user', '12345')->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testLoginBadPassword($instance) {
+        $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $instance->login('admin', 'bad_password')->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
     public function testSignup($instance) {
         $this->assertEquals(ResponseHTTP::CREATED, $instance->signup('carlos.menjivar', 'carlos@gmail.com', '12345')->statusCode);
     }

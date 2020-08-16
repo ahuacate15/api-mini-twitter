@@ -58,7 +58,7 @@ class routeHTTPTest extends TestCase {
     */
     public function testExecCallbackWithService($instance) {
 
-        $instance->addRoute('GET', '/auth/{id:\d+}', function($params, $service) {
+        $instance->addRoute('GET', '/auth/{id:\d+}', function($service, $params) {
             $id = $params['id'];
             return $service($id, 2);
         });

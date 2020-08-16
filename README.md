@@ -12,11 +12,48 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 
 | Método | Punto de acceso | Descripción |
 | --- | --- | --- |
-| POST | ``/auth/login`` | autorizar inicios de sesión |
+| POST | [``/auth/login``](#authlogin) | autorizar inicios de sesión |
 | POST | [``/auth/signup``](#authsignup) | registrar un usuario en la aplicación |
 
 
 ## Detalle de las rutas
+### /auth/login
+| Parametro | Requerido | Descripción | Restricción |
+| --- | --- | --- | --- |
+| key | SI | nombre de usuario o correo electrónico | |
+| password | SI | contraseña | 64 caracteres |
+
+Petición HTTP
+```curl
+curl --location --request POST '127.0.0.1/api-mini-twitter/auth/login' \
+--form 'key=carlos.menjivar@gmail.com' \
+--form 'password=12345'
+```
+
+Código de estado http **200**
+```javascript
+{
+    "message": "inicio de sesion correcto",
+    "userName": "carlos.menjivar",
+    "email": "carlos.menjivar@gmail.com",
+    "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNTk3NTg1MDQ4LCJleHAiOjE2MDYyMjUwNDgsImRhdGEiOnsidXNlck5hbWUiOiJjYXJsb3MubWVuaml2YXIiLCJlbWFpbCI6ImNhcmxvcy5tZW5qaXZhckBnbWFpbC5jb20ifX0.rU_Nr3W7yNO6Y_jmC7ti5CV_F9GoS1MIWUheUfqmiUM"
+}
+```
+
+Codigo de estado http **401**
+```javascript
+{
+    "message": "Credenciales incorrectas"
+}
+```
+
+Codigo de estado http **404**
+```javascript
+{
+    "message": "El usuario no existe"
+}
+```
+
 ### /auth/signup
 | Parametro | Requerido | Descripción | Restricción |
 | --- | --- | --- | --- |

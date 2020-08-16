@@ -1,15 +1,46 @@
 <?php
 require_once __DIR__.'/../includes/responseHTTP.php';
+require_once __DIR__.'/../includes/jwtSecurity.php';
 require_once __DIR__.'/../dao/userDao.php';
 
 class UserService {
 
-    private $response;
     private $userDao;
+    private $response;
+    private $jwt;
 
     public function __construct($userDao) {
-        $this->response = new ResponseHTTP();
         $this->userDao = $userDao;
+        $this->response = new ResponseHTTP();
+        $this->jwt = new JwtSecurity();
+    }
+
+    /**
+    * @param key es el nombre de usuario o correo electronico
+    */
+    public function login($key, $password) {
+        $user = $this->userDao->findByUserNameOrEmail($key);
+
+        if(!$user)
+            return $this->response->jsonResponse(ResponseHTTP::NOT_FOUND, array('message' => 'El usuario no existe'));
+
+        if(password_verify($password, $user['password_hash'])) {
+            $userEntity = new UserEntity();
+            $userEntity->userName = $user['user_name'];
+            $userEntity->email = $user['email'];
+
+            $jwt = $this->jwt->generateToken($userEntity);
+
+            return $this->response->jsonResponse(ResponseHTTP::OK, array(
+                'message' => 'inicio de sesion correcto',
+                'userName' => $userEntity->userName,
+                'email' => $userEntity->email,
+                'jwt' => $jwt
+            ));
+        } else {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'Credenciales incorrectas'));
+        }
+
     }
 
     public function signup($userName, $email, $password) {
