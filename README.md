@@ -30,28 +30,24 @@ curl --location --request POST '127.0.0.1/api-mini-twitter/auth/login' \
 --form 'password=12345'
 ```
 
-Código de estado http **200**
+Estado : 200
 ```javascript
 {
     "message": "inicio de sesion correcto",
-    "userName": "carlos.menjivar",
+    "user_name": "carlos.menjivar",
     "email": "carlos.menjivar@gmail.com",
     "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNTk3NTg1MDQ4LCJleHAiOjE2MDYyMjUwNDgsImRhdGEiOnsidXNlck5hbWUiOiJjYXJsb3MubWVuaml2YXIiLCJlbWFpbCI6ImNhcmxvcy5tZW5qaXZhckBnbWFpbC5jb20ifX0.rU_Nr3W7yNO6Y_jmC7ti5CV_F9GoS1MIWUheUfqmiUM"
 }
 ```
 
-Codigo de estado http **401**
+Estado : 401
 ```javascript
-{
-    "message": "Credenciales incorrectas"
-}
+{ "message": "credenciales incorrectas" }
 ```
 
-Codigo de estado http **404**
+Estado : 404
 ```javascript
-{
-    "message": "El usuario no existe"
-}
+{ "message": "el usuario no existe" }
 ```
 
 ### /auth/signup
@@ -61,11 +57,48 @@ Codigo de estado http **404**
 | email | SI | correo electrónico valido |  256 caracteres |
 | password | SI | contraseña | 64 caracteres |
 
-| Codigo HTTP | Mensaje |
-| --- | --- |
-| 201 | usuario registrado |
-| 400 | faltan parámetros |
-| 403 | el usuario o correo están en uso |
-| 500 | error al registrar usuario |
+Peticion
+```curl
+curl --location --request POST '127.0.0.1/api-mini-twitter/auth/signup' \
+--form 'user_name=mario.fuentes' \
+--form 'email=mario.fuentes@gmail.com' \
+--form 'password=12345'
+```
+
+Estado : 201
+```javascript
+{
+    "id_user": "91",
+    "user_name": "mario.fuentes",
+    "email": "mario.fuentes@gmail.com",
+    "role": "USER",
+    "created_date": "2020-08-23 21:25:52",
+    "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNTk4MjM5NTUyLCJleHAiOjE2MDY4Nzk1NTIsImRhdGEiOnsidXNlck5hbWUiOiJtYXJpby5mdWVudGVzc3NzcyIsImVtYWlsIjoibWFyaW8uZnVlbnRlc3Nzc3NAZ21haWwuY29tIn19.CL3bGnoarDyn2fGPWTvTiYqulp6SiYe19hlrsqGrwIQ"
+}
+```
+
+Estado : 400
+```javascript
+{ "message" : "falta el usuario" }
+```
+```javascript
+{ "message" : "falta el correo" }
+```
+```javascript
+{ "message" : "falta el password" }
+```
+```javascript
+{ "message" : "el formato de correo es incorrecto" }
+```
+
+Estado : 403
+```javascript
+{ "message" : "el usuario o correo están en uso" }
+```
+
+Estado : 500
+```javascript
+{ "message" : "error al registrar usuario" }
+```
 
 ### Usuarios
