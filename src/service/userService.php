@@ -21,8 +21,9 @@ class UserService {
     public function login($key, $password) {
         $user = $this->userDao->findByUserNameOrEmail($key);
 
-        if(!$user)
-            return $this->response->jsonResponse(ResponseHTTP::NOT_FOUND, array('message' => 'El usuario no existe'));
+        if(!$user) {
+            return $this->response->jsonResponse(ResponseHTTP::NOT_FOUND, array('message' => 'el usuario no existe'));
+        }
 
         if(password_verify($password, $user['password_hash'])) {
             $userEntity = new UserEntity();
@@ -33,12 +34,12 @@ class UserService {
 
             return $this->response->jsonResponse(ResponseHTTP::OK, array(
                 'message' => 'inicio de sesion correcto',
-                'userName' => $userEntity->userName,
+                'user_name' => $userEntity->userName,
                 'email' => $userEntity->email,
                 'jwt' => $jwt
             ));
         } else {
-            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'Credenciales incorrectas'));
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'credenciales incorrectas'));
         }
 
     }
@@ -47,16 +48,16 @@ class UserService {
 
         /* validacion de parametros */
         if($userName == '' || $userName == null)
-            return $this->response->textResponse(ResponseHTTP::BAD_REQUEST, 'Falta el usuario');
+            return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'falta el usuario'));
 
         if($email == '' || $email == null)
-            return $this->response->textResponse(ResponseHTTP::BAD_REQUEST, 'Falta el correo');
+            return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'falta el correo'));
 
         if($password == '' || $password == null)
-            return $this->response->textResponse(ResponseHTTP::BAD_REQUEST, 'Falta el password');
+            return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'falta el password'));
 
         if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-            return $this->response->textResponse(ResponseHTTP::BAD_REQUEST, 'El formato de correo es incorrecto');
+            return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'el formato de correo es incorrecto'));
 
         $userEntity = new UserEntity();
         $userEntity->userName = $userName;
@@ -65,13 +66,16 @@ class UserService {
 
         switch ($this->userDao->saveUser($userEntity)) {
             case Connection::OK:
-                return $this->response->textResponse(ResponseHTTP::CREATED, 'ok');
+                $createdUser = $this->userDao->findByUserNameOrEmail($userName);
+                $createdUser['jwt'] = $this->jwt->generateToken($userEntity);
+                unset($createdUser['password_hash']);
+                return $this->response->jsonResponse(ResponseHTTP::CREATED, $createdUser);
                 break;
             case Connection::DUPLICATE_ROW:
-                return $this->response->textResponse(ResponseHTTP::CONFLICT, 'el usuario o correo están en uso');
+                return $this->response->jsonResponse(ResponseHTTP::CONFLICT, array('message' => 'el usuario o correo están en uso'));
                 break;
             default:
-                return $this->response->textResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, 'error al registrar usuario');
+                return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al registrar usuario'));
         }
     }
 }

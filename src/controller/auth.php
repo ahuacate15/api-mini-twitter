@@ -2,6 +2,16 @@
 require_once __DIR__.'/../includes/routeHTTP.php';
 require_once __DIR__.'/../service/userService.php';
 
+$jsonEncoded = file_get_contents('php://input');
+$jsonDecoded = json_decode($jsonEncoded, true);
+
+if (is_array($jsonDecoded)) {
+   foreach ($jsonDecoded as $varName => $varValue) {
+       $_POST[$varName] = $varValue;
+   }
+}
+
+
 $userService = new UserService(new UserDao());
 $route = new RouteHTTP();
 

@@ -18,7 +18,7 @@ class userServiceTest extends TestCase {
 
         $object = $instance->login('admin', '12345');
         $this->assertArrayHasKey('message', $object->object);
-        $this->assertArrayHasKey('userName', $object->object);
+        $this->assertArrayHasKey('user_name', $object->object);
         $this->assertArrayHasKey('email', $object->object);
         $this->assertArrayHasKey('jwt', $object->object);
     }
@@ -41,7 +41,26 @@ class userServiceTest extends TestCase {
     * @depends testInstance
     */
     public function testSignup($instance) {
-        $this->assertEquals(ResponseHTTP::CREATED, $instance->signup('carlos.menjivar', 'carlos@gmail.com', '12345')->statusCode);
+        $response = $instance->signup('carlos.menjivar', 'carlos@gmail.com', '12345');
+
+        $userEntity = new UserEntity();
+        $userEntity->userName = 'carlos.menjivar';
+        $userEntity->email = 'carlos.itca@gmail.com';
+
+        $jwt = new JwtSecurity();
+        //valido el token generado al crear un usuario
+        $this->assertNotFalse($jwt->validateToken($response->object['jwt']));
+        //verifico que coincida el estado de la peticion
+        $this->assertEquals(ResponseHTTP::CREATED, $response->statusCode);
+        //elimino el token del objeto response, ya que es distinto al variar los microsegundos de creacion
+        unset($response->object['jwt']);
+        $this->assertEquals(array(
+                'message' => 'inicio de sesion correcto',
+                'user_name' => 'carlos.menjivar',
+                'email' => 'carlos.itca@gmail.com'
+            ),
+            $response->object
+        );
     }
 
     /**
