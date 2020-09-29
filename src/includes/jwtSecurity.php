@@ -29,12 +29,12 @@ class JwtSecurity {
             )
         );
 
-        return JWT::encode($token, $this->secret_key);
+        return JWT::encode($token,  base64_decode($this->secret_key), 'HS512');
     }
 
     public function validateToken($token) {
         try {
-            return JWT::decode($token, $this->secret_key, array('HS256'));
+            return JWT::decode($token, base64_decode($this->secret_key), 'HS512');
         } catch(Exception $e) {
             return false;
         }
