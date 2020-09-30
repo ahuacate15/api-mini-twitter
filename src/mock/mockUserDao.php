@@ -20,6 +20,13 @@ class MockUserDao {
                 'email' => 'admin@test.gob',
                 'password_hash' => '$2y$10$IFAzzGLl7Gfz2xhEMrcaQ.irxDk7KaYtauS9NcxlXjaWNOF2dqmmK',
                 'created_date' => date('Y-m-d H:i:s')
+            ),
+            'carlos.menjivar' => array(
+                'id_user' => 2,
+                'user_name' => 'carlos.menjivar',
+                'email' => 'carlos.itca@gmail.com',
+                'password_hash' => '$2y$10$IFAzzGLl7Gfz2xhEMrcaQ.irxDk7KaYtauS9NcxlXjaWNOF2dqmmK',
+                'created_date' => '2020-09-28 20:21:48'
             )
         );
 

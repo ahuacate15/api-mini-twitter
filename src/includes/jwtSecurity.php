@@ -34,7 +34,7 @@ class JwtSecurity {
 
     public function validateToken($token) {
         try {
-            return JWT::decode($token, base64_decode($this->secret_key), 'HS512');
+            return JWT::decode($token, base64_decode($this->secret_key), array('HS512'));
         } catch(Exception $e) {
             return false;
         }

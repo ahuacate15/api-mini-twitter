@@ -37,6 +37,6 @@ $uri = $_SERVER['REQUEST_URI'];
 if($route->isAuthorizedRoute($method, $uri)) {
     $route->execCallback();
 } else {
-    //error 404
+    header('HTTP/1.0 401 Unauthorized');
 }
 ?>

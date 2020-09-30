@@ -2,7 +2,7 @@
 require_once __DIR__.'/iUserDao.php';
 require_once __DIR__.'/../includes/connection.php';
 
-class UserDao extends Connection {
+class UserDao extends Connection implements iUserDao{
 
     public function __construct() {
         parent::__construct();

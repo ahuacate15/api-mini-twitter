@@ -63,7 +63,6 @@ class UserService {
         $userEntity->userName = $userName;
         $userEntity->email = $email;
         $userEntity->passwordHash = password_hash($password, CRYPT_BLOWFISH);
-
         switch ($this->userDao->saveUser($userEntity)) {
             case Connection::OK:
                 $createdUser = $this->userDao->findByUserNameOrEmail($userName);

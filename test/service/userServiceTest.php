@@ -41,6 +41,7 @@ class userServiceTest extends TestCase {
     * @depends testInstance
     */
     public function testSignup($instance) {
+
         $response = $instance->signup('carlos.menjivar', 'carlos@gmail.com', '12345');
 
         $userEntity = new UserEntity();
@@ -48,19 +49,25 @@ class userServiceTest extends TestCase {
         $userEntity->email = 'carlos.itca@gmail.com';
 
         $jwt = new JwtSecurity();
+
         //valido el token generado al crear un usuario
         $this->assertNotFalse($jwt->validateToken($response->object['jwt']));
+
         //verifico que coincida el estado de la peticion
         $this->assertEquals(ResponseHTTP::CREATED, $response->statusCode);
+
         //elimino el token del objeto response, ya que es distinto al variar los microsegundos de creacion
         unset($response->object['jwt']);
+
         $this->assertEquals(array(
-                'message' => 'inicio de sesion correcto',
                 'user_name' => 'carlos.menjivar',
-                'email' => 'carlos.itca@gmail.com'
+                'email' => 'carlos.itca@gmail.com',
+                'id_user' => 2,
+                'created_date' => '2020-09-28 20:21:48'
             ),
             $response->object
         );
+
     }
 
     /**

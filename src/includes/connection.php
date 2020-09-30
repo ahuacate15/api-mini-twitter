@@ -42,6 +42,11 @@ class Connection {
         return $this->statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    protected function fetchAll() {
+        $this->statement->execute();
+        return $this->statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     /*
     * regresa alguna de las constantes de estado definidas
     * al inicio de la clase
