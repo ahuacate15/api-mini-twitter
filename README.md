@@ -15,6 +15,11 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 | POST | [``/auth/login``](#authlogin) | autorizar inicios de sesión |
 | POST | [``/auth/signup``](#authsignup) | registrar un usuario en la aplicación |
 
+### Tweets
+
+| Método | Punto de acceso | Autenticación | Descripción |
+| --- | --- | --- |
+| GET | [``/tweet/all``](#tweetall) | SI | lista de tweets |
 
 ## Detalle de las rutas
 ### /auth/login
@@ -99,6 +104,32 @@ Estado : 403
 Estado : 500
 ```javascript
 { "message" : "error al registrar usuario" }
+```
+### /tweet/all
+
+Petición
+```curl
+curl --location --request GET 'http://127.0.0.1/api-mini-twitter/tweet/all' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNjAxNDMwNzc2LCJleHAiOjE2MTAwNzA3NzYsImRhdGEiOnsidXNlck5hbWUiOiJjYXJsb3MubWVuaml2YXIiLCJlbWFpbCI6ImNhcmxvcy5tZW5qaXZhckBnbWFpbC5jb20ifX0.k5oh8ZSHoFnganPSIvXM_mzU6YGzVnk7X3kAbZMQNYfYxX8rJwRLk7WWO9N-kPwN_cPWzlzL66Fr7Dsng8kPPA'
+```
+
+Estado : 200
+```javascript
+[
+    {
+        "id_tweet": "4",
+        "created_date": "2020-09-28 20:21:48",
+        "message": "La filosofía de Heidegger es una filosofía característicamente filológica o lingüística, en el sentido de que sus filosofemas consisten en considerable proporción en hacer explícito el sentido que encuéntrase implícito en las expresiones.",
+        "id_user": "78",
+        "user_name": "carlos.menjivar",
+        "count_likes": "1"
+    }
+]
+```
+
+Estado : 401
+```javascript
+{ "message": "acceso denegado" }
 ```
 
 ### Usuarios

@@ -9,7 +9,9 @@ class UtilHTTP {
 
     public function getJWT() {
         if(isset($this->headers['Authorization'])) {
-            return str_replace('bearer ', '', $this->headers['Authorization']);
+            $token = str_replace('bearer ', '', $this->headers['Authorization']);
+            $token = str_replace('Bearer ', '', $token);
+            return $token;
         } else {
             return null;
         }
