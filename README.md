@@ -18,8 +18,7 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 ### Tweets
 
 | Método | Punto de acceso | Autenticación | Descripción |
-| --- | --- | --- |
-| POST | [``/tweet``]($tweet) | SI | crear un nuevo tweet |
+| --- | --- | --- | --- |
 | GET | [``/tweet/all``](#tweetall) | SI | lista de tweets |
 
 ## Detalle de las rutas
