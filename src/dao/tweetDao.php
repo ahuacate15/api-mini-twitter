@@ -20,5 +20,17 @@ class TweetDao extends Connection implements iTweetDao  {
         $this->setQuery($sql);
         return $this->fetchAll();
     }
+
+    public function create($idUser, $message) {
+        $sql =
+            "insert into tweet(id_user, message, created_date) ".
+            "values (:idUser, :message, now())";
+
+        $this->setQuery($sql);
+        $this->setInteger('idUser', $idUser);
+        $this->setString('message', $message);
+
+        return $this->execute();
+    }
 }
 ?>

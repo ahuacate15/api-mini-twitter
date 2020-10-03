@@ -2,7 +2,8 @@
 
 interface iTweetDao {
 
-public function findAll();
+    public function findAll();
+    public function create($idUser, $message);
 }
 
 ?>

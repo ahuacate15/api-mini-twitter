@@ -22,6 +22,11 @@ $route->addRoute('GET', '/tweet/all', function($tweetService) {
      $tweetService->findAll()->response();
 });
 
+$route->addRoute('POST', '/tweet', function($tweetService) {
+    $message = isset($_POST['message']) ? $_POST['message'] : '';
+    $tweetService->create($message)->response();
+});
+
 $route->enroute();
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -30,7 +35,7 @@ $uri = $_SERVER['REQUEST_URI'];
 if($route->isAuthorizedRoute($method, $uri)) {
     $route->execCallback();
 } else {
-    //header('HTTP/1.0 401 Unauthorized');
+    header('HTTP/1.0 401 Unauthorized');
 }
 
 ?>

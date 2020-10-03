@@ -19,6 +19,7 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 
 | Método | Punto de acceso | Autenticación | Descripción |
 | --- | --- | --- |
+| POST | [``/tweet``]($tweet) | SI | crear un nuevo tweet |
 | GET | [``/tweet/all``](#tweetall) | SI | lista de tweets |
 
 ## Detalle de las rutas
@@ -28,14 +29,14 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 | key | SI | nombre de usuario o correo electrónico | |
 | password | SI | contraseña | 64 caracteres |
 
-Petición HTTP
+**Petición HTTP**
 ```curl
 curl --location --request POST '127.0.0.1/api-mini-twitter/auth/login' \
 --form 'key=carlos.menjivar@gmail.com' \
 --form 'password=12345'
 ```
 
-Estado : 200
+**Estado 200 *CREATED***
 ```javascript
 {
     "message": "inicio de sesion correcto",
@@ -45,24 +46,24 @@ Estado : 200
 }
 ```
 
-Estado : 401
+**Estado 401 *UNAUTHORIZED***
 ```javascript
 { "message": "credenciales incorrectas" }
 ```
 
-Estado : 404
+**Estado 404 *NOT FOUND***
 ```javascript
 { "message": "el usuario no existe" }
 ```
 
 ### /auth/signup
-| Parametro | Requerido | Descripción | Restricción |
+| Parámetro | Requerido | Descripción | Restricción |
 | --- | --- | --- | --- |
 | user_name | SI | nombre de usuario | 35 caracteres |
 | email | SI | correo electrónico valido |  256 caracteres |
 | password | SI | contraseña | 64 caracteres |
 
-Peticion
+**Petición HTTP**
 ```curl
 curl --location --request POST '127.0.0.1/api-mini-twitter/auth/signup' \
 --form 'user_name=mario.fuentes' \
@@ -70,7 +71,7 @@ curl --location --request POST '127.0.0.1/api-mini-twitter/auth/signup' \
 --form 'password=12345'
 ```
 
-Estado : 201
+**Estado 201 *CREATED***
 ```javascript
 {
     "id_user": "91",
@@ -82,7 +83,7 @@ Estado : 201
 }
 ```
 
-Estado : 400
+**Estado 400 *BAD REQUEST***
 ```javascript
 { "message" : "falta el usuario" }
 ```
@@ -96,24 +97,57 @@ Estado : 400
 { "message" : "el formato de correo es incorrecto" }
 ```
 
-Estado : 403
+**Estado 403 *FORBIDDEN***
 ```javascript
 { "message" : "el usuario o correo están en uso" }
 ```
 
-Estado : 500
+**Estado 500 *INTERNAL SERVER ERROR***
 ```javascript
 { "message" : "error al registrar usuario" }
 ```
+
+### /tweet
+| Parámetro | Requerido | Descripción | Restricción |
+| --- | --- | --- | --- |
+| message | SI | contenido del tweet | 256 caracteres |
+
+**Petición HTTP**
+```curl
+curl --location --request POST 'http://127.0.0.1/api-mini-twitter/tweet' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNjAxNzQyNjc2LCJleHAiOjE2MTAzODI2NzYsImRhdGEiOnsiaWRVc2VyIjoiNzgiLCJ1c2VyTmFtZSI6ImNhcmxvcy5tZW5qaXZhciIsImVtYWlsIjoiY2FybG9zLm1lbmppdmFyQGdtYWlsLmNvbSJ9fQ.LDgCJdRXUMr4mYMS16ihL1TiFELcuoPjovwTNLOk2T94kCR-LdXC4D6TvOHePffbgU-QEymDpNiPDjsiJsyGIg' \
+--form 'message=El amor se conmovía en los corazones de las jóvenes hijas de los brahmanes cuando Siddhartha pasaba por las calles de la ciudad, con la frente  luminosa, con los ojos reales, con las estrechas caderas.'
+```
+
+**Estado 200 *OK***
+```javascript
+{ "message": "tweet creado" }
+```
+
+**Estado 400 *BAD REQUEST***
+```javascript
+{ "message": "tu tweet no puede tener mas de 256 caracteres" }
+```
+
+ocurre cuando el idUser del token es incorrecto
+```javascript
+{ "message": "parece que tu usuario no existe" }
+```
+
+**Estado 500  *INTERNAL SERVER ERROR***
+```javascript
+{ "message": "error al registrar usuario"}
+```
+
 ### /tweet/all
 
-Petición
+**Petición http**
 ```curl
 curl --location --request GET 'http://127.0.0.1/api-mini-twitter/tweet/all' \
 --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNjAxNDMwNzc2LCJleHAiOjE2MTAwNzA3NzYsImRhdGEiOnsidXNlck5hbWUiOiJjYXJsb3MubWVuaml2YXIiLCJlbWFpbCI6ImNhcmxvcy5tZW5qaXZhckBnbWFpbC5jb20ifX0.k5oh8ZSHoFnganPSIvXM_mzU6YGzVnk7X3kAbZMQNYfYxX8rJwRLk7WWO9N-kPwN_cPWzlzL66Fr7Dsng8kPPA'
 ```
 
-Estado : 200
+**Estado 200 *OK***
 ```javascript
 [
     {
@@ -127,9 +161,7 @@ Estado : 200
 ]
 ```
 
-Estado : 401
+**Estado 401 *UNAUTHORIZED***
 ```javascript
 { "message": "acceso denegado" }
 ```
-
-### Usuarios

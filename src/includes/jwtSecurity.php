@@ -24,6 +24,7 @@ class JwtSecurity {
             'iat' => $this->generation_date,
             'exp' => $this->expiration_date,
             'data' => array(
+                'idUser' => $userEntity->idUser,
                 'userName' => $userEntity->userName,
                 'email' => $userEntity->email
             )

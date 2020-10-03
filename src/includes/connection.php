@@ -11,6 +11,8 @@ class Connection {
     public const TABLE_NOT_EXIST = 1146;
     public const COLUMNS_DOESNT_MATCH = 1136;
     public const INCORRECT_DATETIME_VALUE = 1292;
+    public const FOREIGN_KEY_FAIL = 1452;
+    public const DATA_TO_LONG = 1406;
     public const ERROR_PARAMS = 0;
     public const OK = -1;
 

@@ -27,6 +27,7 @@ class UserService {
 
         if(password_verify($password, $user['password_hash'])) {
             $userEntity = new UserEntity();
+            $userEntity->idUser = $user['id_user'];
             $userEntity->userName = $user['user_name'];
             $userEntity->email = $user['email'];
 

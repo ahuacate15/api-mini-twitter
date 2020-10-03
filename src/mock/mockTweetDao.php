@@ -29,5 +29,18 @@ class MockTweetDao implements iTweetDao {
 
         return $data;
     }
+
+    public function create($idUser, $message) {
+        if($idUser == 1) {
+            if(strlen($message) > 256) {
+                return Connection::DATA_TO_LONG;
+            }
+            else {
+                return Connection::OK;
+            }
+        } else {
+            return Connection::FOREIGN_KEY_FAIL;
+        }
+    }
 }
 ?>

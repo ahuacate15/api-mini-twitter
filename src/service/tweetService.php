@@ -27,6 +27,24 @@ class TweetService {
         return $this->response->jsonResponse(ResponseHTTP::OK, $tweetList);
     }
 
+    public function create($message) {
+        $jwtData = $this->jwt->validateToken($this->token);
+
+        if(!$jwtData)
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+
+        switch ($this->tweetDao->create($jwtData->data->idUser, $message)) {
+            case Connection::OK:
+                return $this->response->jsonResponse(ResponseHTTP::OK, array('message' => 'tweet creado'));
+            case Connection::FOREIGN_KEY_FAIL:
+                return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'parece que tu usuario no existe'));
+            case Connection::DATA_TO_LONG:
+                return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'tu tweet no puede tener mas de 256 caracteres'));
+            default:
+                return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al registrar usuario'));
+        }
+    }
+
     public function setToken($token) {
         $this->token = $token;
     }
