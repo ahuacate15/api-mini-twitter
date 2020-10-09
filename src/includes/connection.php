@@ -14,6 +14,7 @@ class Connection {
     public const FOREIGN_KEY_FAIL = 1452;
     public const DATA_TO_LONG = 1406;
     public const ERROR_PARAMS = 0;
+    public const DATA_NOT_FOUND = -2;
     public const OK = -1;
 
     protected $conn;
@@ -60,8 +61,10 @@ class Connection {
         } catch(PDOException $e) {
             return $e->errorInfo[1];
         }
+    }
 
-
+    public function lastInsertId() {
+        return $this->conn->lastInsertId();
     }
 }
 ?>

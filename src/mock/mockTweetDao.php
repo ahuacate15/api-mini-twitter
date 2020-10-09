@@ -31,16 +31,34 @@ class MockTweetDao implements iTweetDao {
     }
 
     public function create($idUser, $message) {
+
         if($idUser == 1) {
             if(strlen($message) > 256) {
-                return Connection::DATA_TO_LONG;
+                throw new \Exception("error al ejecutar la consulta", Connection::DATA_TO_LONG);
             }
             else {
                 return Connection::OK;
             }
         } else {
-            return Connection::FOREIGN_KEY_FAIL;
+            throw new \Exception("error al ejecutar la consulta", Connection::FOREIGN_KEY_FAIL);
         }
+    }
+
+    public function findById($idTweet) {
+        $data = array(
+            1 => array(
+                'id_tweet' => 1,
+                'created_date' => '2020-09-28 20:23:39',
+                'message' => 'Relegaron, pues, al creador y maestro al término de suyo un tanto lejano y oscuro fundador sus coruscantes discípulos y continuadores.',
+                'id_user' => 1
+            )
+        );
+
+        return isset($data[$idTweet]) ? $data[$idTweet] : false;
+    }
+
+    public function lastInsertId() {
+        return 1;
     }
 }
 ?>

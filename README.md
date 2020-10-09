@@ -30,7 +30,7 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 | password | SI | contraseña | 64 caracteres |
 
 **Petición HTTP**
-```curl
+```bash
 curl --location --request POST '127.0.0.1/api-mini-twitter/auth/login' \
 --form 'key=carlos.menjivar@gmail.com' \
 --form 'password=12345'
@@ -64,7 +64,7 @@ curl --location --request POST '127.0.0.1/api-mini-twitter/auth/login' \
 | password | SI | contraseña | 64 caracteres |
 
 **Petición HTTP**
-```curl
+```bash
 curl --location --request POST '127.0.0.1/api-mini-twitter/auth/signup' \
 --form 'user_name=mario.fuentes' \
 --form 'email=mario.fuentes@gmail.com' \
@@ -113,7 +113,7 @@ curl --location --request POST '127.0.0.1/api-mini-twitter/auth/signup' \
 | message | SI | contenido del tweet | 256 caracteres |
 
 **Petición HTTP**
-```curl
+```bash
 curl --location --request POST 'http://127.0.0.1/api-mini-twitter/tweet' \
 --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNjAxNzQyNjc2LCJleHAiOjE2MTAzODI2NzYsImRhdGEiOnsiaWRVc2VyIjoiNzgiLCJ1c2VyTmFtZSI6ImNhcmxvcy5tZW5qaXZhciIsImVtYWlsIjoiY2FybG9zLm1lbmppdmFyQGdtYWlsLmNvbSJ9fQ.LDgCJdRXUMr4mYMS16ihL1TiFELcuoPjovwTNLOk2T94kCR-LdXC4D6TvOHePffbgU-QEymDpNiPDjsiJsyGIg' \
 --form 'message=El amor se conmovía en los corazones de las jóvenes hijas de los brahmanes cuando Siddhartha pasaba por las calles de la ciudad, con la frente  luminosa, con los ojos reales, con las estrechas caderas.'
@@ -121,7 +121,14 @@ curl --location --request POST 'http://127.0.0.1/api-mini-twitter/tweet' \
 
 **Estado 200 *OK***
 ```javascript
-{ "message": "tweet creado" }
+{
+    "id_tweet": "1",
+    "created_date": "2020-10-03 14:20:05",
+    "message": "El amor se conmovía en los corazones de las jóvenes hijas de los brahmanes   cuando   Siddhartha   pasaba   por   las   calles   de   la ciudad,  con  la  frente  luminosa,  con  los  ojos  reales,  con  las estrechas caderas.",
+    "id_user": "1",
+    "user_name": "admin",
+    "count_likes": "0"
+}
 ```
 
 **Estado 400 *BAD REQUEST***
@@ -142,7 +149,7 @@ ocurre cuando el idUser del token es incorrecto
 ### /tweet/all
 
 **Petición http**
-```curl
+```bash
 curl --location --request GET 'http://127.0.0.1/api-mini-twitter/tweet/all' \
 --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNjAxNDMwNzc2LCJleHAiOjE2MTAwNzA3NzYsImRhdGEiOnsidXNlck5hbWUiOiJjYXJsb3MubWVuaml2YXIiLCJlbWFpbCI6ImNhcmxvcy5tZW5qaXZhckBnbWFpbC5jb20ifX0.k5oh8ZSHoFnganPSIvXM_mzU6YGzVnk7X3kAbZMQNYfYxX8rJwRLk7WWO9N-kPwN_cPWzlzL66Fr7Dsng8kPPA'
 ```

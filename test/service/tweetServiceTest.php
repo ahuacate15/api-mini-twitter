@@ -66,7 +66,7 @@ class tweetServiceTest extends TestCase {
         $utilHttp = new utilHTTP($headers);
         $instance->setToken($utilHttp->getJWT());
         $this->assertEquals(ResponseHTTP::OK, $instance->create("tweet message")->statusCode);
-        $this->assertEquals("tweet creado", $instance->create("tweet message")->object['message']);
+        $this->assertIsArray($instance->create("tweet message")->object);
     }
 
     /**
@@ -77,7 +77,7 @@ class tweetServiceTest extends TestCase {
         $utilHttp = new utilHTTP($headers);
         $instance->setToken($utilHttp->getJWT());
         $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->create("tweet message")->statusCode);
-        $this->assertEquals("parece que tu usuario no existe", $instance->create("tweet message")->object['message']);
+        $this->assertEquals("error al recuperar los datos de tu usuario", $instance->create("tweet message")->object['message']);
     }
 
     /**

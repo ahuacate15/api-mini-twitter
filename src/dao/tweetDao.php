@@ -30,7 +30,34 @@ class TweetDao extends Connection implements iTweetDao  {
         $this->setInteger('idUser', $idUser);
         $this->setString('message', $message);
 
-        return $this->execute();
+        $code = $this->execute();
+
+        if($code == Connection::OK) {
+            return $code;
+        } else {
+            throw new \Exception("error al ejecutar la consulta", $code);
+
+        }
+    }
+
+    public function findById($idTweet) {
+        $sql =
+            "select ".
+            "   t.id_tweet, t.created_date, t.message, t.id_user, u.user_name, ".
+            "   (select count(0) from tweet_like _tl where _tl.id_user = u.id_user and _tl.id_tweet = t.id_tweet) as count_likes ".
+            "from tweet t ".
+            "inner join user u on u.id_user = t.id_user ".
+            "where t.id_tweet = :idTweet";
+
+        $this->setQuery($sql);
+        $this->setInteger('idTweet', $idTweet);
+
+        $data = $this->fetch();
+
+        if(!$data) {
+            throw new \Exception("registro no encontrado", Connection::DATA_NOT_FOUND);
+        }
+        return $this->fetch();
     }
 }
 ?>

@@ -33,15 +33,22 @@ class TweetService {
         if(!$jwtData)
             return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
 
-        switch ($this->tweetDao->create($jwtData->data->idUser, $message)) {
-            case Connection::OK:
-                return $this->response->jsonResponse(ResponseHTTP::OK, array('message' => 'tweet creado'));
-            case Connection::FOREIGN_KEY_FAIL:
-                return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'parece que tu usuario no existe'));
-            case Connection::DATA_TO_LONG:
-                return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'tu tweet no puede tener mas de 256 caracteres'));
-            default:
-                return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al registrar usuario'));
+        try {
+            //guardo el tweet
+            $this->tweetDao->create($jwtData->data->idUser, $message);
+
+            //recupero el registro
+            $tweet = $this->tweetDao->findById($this->tweetDao->lastInsertId());
+            return $this->response->jsonResponse(ResponseHTTP::OK, $tweet);
+        } catch(Exception $e) {
+            switch ($e->getCode()) {
+                case Connection::FOREIGN_KEY_FAIL:
+                    return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'error al recuperar los datos de tu usuario'));
+                case Connection::DATA_TO_LONG:
+                    return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'tu tweet no puede tener mas de 256 caracteres'));
+                default:
+                    return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al registrar tweet'));
+            }
         }
     }
 
