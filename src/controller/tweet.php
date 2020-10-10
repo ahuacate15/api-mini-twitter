@@ -27,6 +27,14 @@ $route->addRoute('POST', '/tweet', function($tweetService) {
     $tweetService->create($message)->response();
 });
 
+$route->addRoute('PUT', '/tweet/like/{id:\d+}', function($tweetService, $params) {
+    $tweetService->likeTweet($params['id'])->response();
+});
+
+$route->addRoute('DELETE', '/tweet/like/{id:\d+}', function($tweetService, $params) {
+    $tweetService->unlikeTweet($params['id'])->response();
+});
+
 $route->enroute();
 
 $method = $_SERVER['REQUEST_METHOD'];

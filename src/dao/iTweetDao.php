@@ -2,9 +2,18 @@
 
 interface iTweetDao {
 
-    public function findAll();
+    /**
+    * @param idUser verifico que el usuario del parametro haya dado like al tweet
+    */
+    public function findAll($idUser);
     public function create($idUser, $message);
-    public function findById($idTweet);
+
+    /**
+    * @param idUser verifico que el usuario del parametro haya dado like al tweet
+    */
+    public function findById($idTweet, $idUser);
+    public function likeTweet($idUser, $idTweet);
+    public function unlikeTweet($idUser, $idTweet);
 }
 
 ?>

@@ -4,7 +4,7 @@ require_once __DIR__.'/../dao/iTweetDao.php';
 
 class MockTweetDao implements iTweetDao {
 
-    public function findAll() {
+    public function findAll($idUser) {
 
         $data = array(
             array(
@@ -44,7 +44,7 @@ class MockTweetDao implements iTweetDao {
         }
     }
 
-    public function findById($idTweet) {
+    public function findById($idTweet, $idUser) {
         $data = array(
             1 => array(
                 'id_tweet' => 1,
@@ -55,6 +55,28 @@ class MockTweetDao implements iTweetDao {
         );
 
         return isset($data[$idTweet]) ? $data[$idTweet] : false;
+    }
+
+    public function likeTweet($idUser, $idTweet) {
+
+        /* registros existentes */
+        if($idUser == 1 && $idTweet == 1) {
+            return Connection::OK;
+        }
+        /* simulo que el usuario ID 1 ya ha dado like al tweet 2 */
+        else if($idUser == 1 && $idTweet == 2) {
+            throw new \Exception("error al ejecutar la consulta", Connection::DUPLICATE_ROW);
+        }
+        /* inserto datos inexistentes, se produce un error de clave foarena */
+        else {
+            throw new \Exception("error al ejecutar la consulta", Connection::FOREIGN_KEY_FAIL);
+        }
+
+
+    }
+
+    public function unlikeTweet($idUser, $idTweet) {
+        return Connection::OK;
     }
 
     public function lastInsertId() {

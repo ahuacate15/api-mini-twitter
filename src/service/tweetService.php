@@ -23,7 +23,7 @@ class TweetService {
         if(!$jwtData)
             return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
 
-        $tweetList = $this->tweetDao->findAll();
+        $tweetList = $this->tweetDao->findAll($jwtData->data->idUser);
         return $this->response->jsonResponse(ResponseHTTP::OK, $tweetList);
     }
 
@@ -38,7 +38,7 @@ class TweetService {
             $this->tweetDao->create($jwtData->data->idUser, $message);
 
             //recupero el registro
-            $tweet = $this->tweetDao->findById($this->tweetDao->lastInsertId());
+            $tweet = $this->tweetDao->findById($this->tweetDao->lastInsertId(), $jwtData->data->idUser);
             return $this->response->jsonResponse(ResponseHTTP::OK, $tweet);
         } catch(Exception $e) {
             switch ($e->getCode()) {
@@ -52,8 +52,51 @@ class TweetService {
         }
     }
 
+    public function likeTweet($idTweet) {
+        $jwtData = $this->getDataToken();
+
+        if(!$jwtData) {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+        }
+
+        try {
+            $this->tweetDao->likeTweet($jwtData->data->idUser, $idTweet);
+            $tweet = $this->tweetDao->findById($idTweet, $jwtData->data->idUser);
+            return $this->response->jsonResponse(ResponseHTTP::OK, $tweet);
+        } catch(Exception $e) {
+            switch ($e->getCode()) {
+                case Connection::FOREIGN_KEY_FAIL:
+                    return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'el tweet o el usuario no existen'));
+                case Connection::DUPLICATE_ROW:
+                    return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'ya has dado like a este tweet'));
+                default:
+                    return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al guardar like'));
+            }
+        }
+    }
+
+    public function unlikeTweet($idTweet) {
+        $jwtData = $this->getDataToken();
+
+        if(!$jwtData) {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+        }
+
+        try {
+            $this->tweetDao->unlikeTweet($jwtData->data->idUser, $idTweet);
+            $tweet = $this->tweetDao->findById($idTweet, $jwtData->data->idUser);
+            return $this->response->jsonResponse(ResponseHTTP::OK, $tweet);
+        } catch(Exception $e) {
+            return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al guardar like'));
+        }
+    }
+
     public function setToken($token) {
         $this->token = $token;
+    }
+
+    public function getDataToken() {
+        return $this->jwt->validateToken($this->token);
     }
 }
 ?>

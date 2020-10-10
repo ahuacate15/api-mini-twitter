@@ -96,5 +96,60 @@ class tweetServiceTest extends TestCase {
         $this->assertEquals("tu tweet no puede tener mas de 256 caracteres", $instance->create($longMessage)->object['message']);
     }
 
+    /**
+    * @depends testInstance
+    */
+    public function testLikeTweet($instance) {
+        $response = $instance->likeTweet(1);
+        $this->assertEquals(ResponseHTTP::OK, $response->statusCode);
+        $this->assertIsArray($response->object);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testLikeTweetDuplicated($instance) {
+        $response = $instance->likeTweet(2);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $response->statusCode);
+        $this->assertEquals('ya has dado like a este tweet', $response->object['message']);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testLikeTweetNotExist($instance) {
+        $response = $instance->likeTweet(3);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $response->statusCode);
+        $this->assertEquals('el tweet o el usuario no existen', $response->object['message']);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testLikeTweetUnauthorized($instance) {
+        $instance->setToken(null);
+        $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $instance->likeTweet(1)->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUnlikeTweet($instance) {
+        $utilHttp = new utilHTTP(array('Authorization' => 'Bearer '.$this->getMockToken()));
+        $instance->setToken($utilHttp->getJWT());
+        $response = $instance->unlikeTweet(1);
+
+
+        $this->assertEquals(ResponseHTTP::OK, $response->statusCode);
+        $this->assertIsArray($response->object);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUnlikeTweetUnauthorized($instance) {
+        $instance->setToken(null);
+        $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $instance->unlikeTweet(1)->statusCode);
+    }
 }
 ?>
