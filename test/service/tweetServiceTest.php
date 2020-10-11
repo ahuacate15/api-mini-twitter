@@ -53,6 +53,27 @@ class tweetServiceTest extends TestCase {
     /**
     * @depends testInstance
     */
+    public function testFindFavorites($instance) {
+        $headers = array('Authorization' => 'Bearer '.$this->getMockToken());
+        $utilHttp = new utilHTTP($headers);
+        $instance->setToken($utilHttp->getJWT());
+
+        $this->assertEquals(ResponseHTTP::OK, $instance->findFavorites()->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testFindFavoritesUnauthorized($instance) {
+        $instance->setToken(null);
+        $response = $instance->findFavorites();
+        $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $response->statusCode);
+        $this->assertIsArray($response->object);
+    }
+
+    /**
+    * @depends testInstance
+    */
     public function testCreateUnauthorized($instance) {
         $instance->setToken(null);
         $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $instance->create("tweet message")->statusCode);

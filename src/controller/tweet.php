@@ -22,6 +22,10 @@ $route->addRoute('GET', '/tweet/all', function($tweetService) {
      $tweetService->findAll()->response();
 });
 
+$route->addRoute('GET', '/tweet/fav', function($tweetService) {
+    $tweetService->findFavorites()->response();
+});
+
 $route->addRoute('POST', '/tweet', function($tweetService) {
     $message = isset($_POST['message']) ? $_POST['message'] : '';
     $tweetService->create($message)->response();

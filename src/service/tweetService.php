@@ -27,6 +27,16 @@ class TweetService {
         return $this->response->jsonResponse(ResponseHTTP::OK, $tweetList);
     }
 
+    public function findFavorites() {
+        $jwtData = $this->jwt->validateToken($this->token);
+
+        if(!$jwtData)
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+
+        $tweetList = $this->tweetDao->findFavorites($jwtData->data->idUser);
+        return $this->response->jsonResponse(ResponseHTTP::OK, $tweetList);
+    }
+
     public function create($message) {
         $jwtData = $this->jwt->validateToken($this->token);
 

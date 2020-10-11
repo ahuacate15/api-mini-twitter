@@ -30,6 +30,19 @@ class MockTweetDao implements iTweetDao {
         return $data;
     }
 
+    public function findFavorites($idUser) {
+        $data = array(
+            array(
+                'id_tweet' => 1,
+                'created_date' => '2020-09-28 20:23:39',
+                'message' => 'Relegaron, pues, al creador y maestro al término de suyo un tanto lejano y oscuro fundador sus coruscantes discípulos y continuadores.',
+                'id_user' => 1
+            )
+        );
+
+        return $data;
+    }
+
     public function create($idUser, $message) {
 
         if($idUser == 1) {

@@ -28,6 +28,25 @@ class TweetDao extends Connection implements iTweetDao  {
         return $this->fetchAll();
     }
 
+    public function findFavorites($idUser) {
+        $sql =
+            "select ".
+            "   t.id_tweet, t.created_date, t.message, t.id_user, u.user_name, ".
+            "   count(tl.id_tweet_like) as count_likes, ". //cantidad de likes del tweet
+            "   count(tl.id_tweet_like) > 0 as my_like ". //verifico si he dado like a este tweet
+            "from tweet t ".
+            "inner join user u on u.id_user = t.id_user ".
+            "left join tweet_like tl on tl.id_tweet = t.id_tweet and tl.id_user = u.id_user ".
+            "inner join tweet_like my_tl on  my_tl.id_tweet = t.id_tweet  and my_tl.id_user = :idUser ".
+            "group by t.id_tweet, t.created_date, t.message, t.id_user, u.user_name ".
+            "order by t.created_date desc ";
+
+        $this->setQuery($sql);
+        $this->setInteger('idUser', $idUser);
+
+        return $this->fetchAll();
+    }
+
     public function create($idUser, $message) {
         $sql =
             "insert into tweet(id_user, message, created_date) ".
