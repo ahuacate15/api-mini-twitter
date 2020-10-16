@@ -41,6 +41,9 @@ create table tweet_like(
 
 alter table tweet_like add constraint uni_tweet_like_tweet unique(id_tweet, id_user);
 
+alter table tweet_like drop constraint fk_tweet_like_tweet;
+alter table tweet_like add constraint fk_tweet_like_tweet foreign key(id_tweet) references tweet(id_tweet) on delete cascade;
+
 insert into tweet(created_date, message, id_user) values (now(), 'Relegaron, pues, al creador y maestro al término de suyo un tanto lejano y oscuro fundador sus coruscantes discípulos y continuadores.', (select id_user from user where user_name = 'carlos.menjivar'));
 insert into tweet(created_date, message, id_user) values (now(), 'Sea como fuere, la primera traducción al español de Sein und Zeit está aún contagiada del entusiasmo inicial, hecho que se manifiesta particularmente en el prólogo del traductor', (select id_user from user where user_name = 'carlos.menjivar'));
 insert into tweet(created_date, message, id_user) values (now(), 'Después de múltiples ensayos he traducido por realidad de verdad esta palabra, sujeto básico para todo lo que se dice en las obras de Heidegger. ', (select id_user from user where user_name = 'carlos.menjivar'));

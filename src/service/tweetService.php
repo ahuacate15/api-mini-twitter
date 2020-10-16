@@ -101,6 +101,21 @@ class TweetService {
         }
     }
 
+    public function delete($idTweet) {
+        $jwtData = $this->getDataToken();
+
+        if(!$jwtData) {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+        }
+
+        try {
+            $this->tweetDao->delete($idTweet);
+            return $this->response->jsonResponse(ResponseHTTP::OK, array('message' => 'tweet eliminado'));
+        } catch(Exception $e) {
+            return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al eliminar tweet'));
+        }
+    }
+
     public function setToken($token) {
         $this->token = $token;
     }

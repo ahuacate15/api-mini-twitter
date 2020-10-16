@@ -20,6 +20,11 @@ interface iTweetDao {
     public function findById($idTweet, $idUser);
     public function likeTweet($idUser, $idTweet);
     public function unlikeTweet($idUser, $idTweet);
+
+    /**
+    * al eliminar un tweet, sus registros asociados se borran en cascada 
+    */
+    public function delete($idTweet);
 }
 
 ?>

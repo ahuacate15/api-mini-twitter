@@ -18,17 +18,21 @@ $tweetService = new TweetService(new TweetDao());
 $tweetService->setToken($utilHttp->getJWT());
 $route->setService($tweetService);
 
+$route->addRoute('POST', '/tweet', function($tweetService) {
+    $message = isset($_POST['message']) ? $_POST['message'] : '';
+    $tweetService->create($message)->response();
+});
+
+$route->addRoute('DELETE', '/tweet/{id:\d+}', function($tweetService, $params) {
+    $tweetService->delete($params['id'])->response();
+});
+
 $route->addRoute('GET', '/tweet/all', function($tweetService) {
      $tweetService->findAll()->response();
 });
 
 $route->addRoute('GET', '/tweet/fav', function($tweetService) {
     $tweetService->findFavorites()->response();
-});
-
-$route->addRoute('POST', '/tweet', function($tweetService) {
-    $message = isset($_POST['message']) ? $_POST['message'] : '';
-    $tweetService->create($message)->response();
 });
 
 $route->addRoute('PUT', '/tweet/like/{id:\d+}', function($tweetService, $params) {

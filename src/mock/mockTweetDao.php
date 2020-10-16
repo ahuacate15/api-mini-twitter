@@ -92,6 +92,14 @@ class MockTweetDao implements iTweetDao {
         return Connection::OK;
     }
 
+    public function delete($idTweet) {
+        if($idTweet == 1) {
+            return Connection::OK;
+        } else {
+            throw new \Exception("Error al ejecutar la consulta", Connection::FOREIGN_KEY_FAIL);
+        }
+    }
+
     public function lastInsertId() {
         return 1;
     }

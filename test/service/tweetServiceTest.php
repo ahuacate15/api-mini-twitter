@@ -172,5 +172,39 @@ class tweetServiceTest extends TestCase {
         $instance->setToken(null);
         $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $instance->unlikeTweet(1)->statusCode);
     }
+
+    /**
+    * @depends testInstance
+    */
+    public function testDelete($instance) {
+        $utilHttp = new utilHTTP(array('Authorization' => 'Bearer '.$this->getMockToken()));
+        $instance->setToken($utilHttp->getJWT());
+        $response = $instance->delete(1);
+
+        $this->assertEquals(ResponseHTTP::OK, $response->statusCode);
+        $this->assertIsArray($response->object);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testDeleteError($instance) {
+        $utilHttp = new utilHTTP(array('Authorization' => 'Bearer '.$this->getMockToken()));
+        $instance->setToken($utilHttp->getJWT());
+        $response = $instance->delete(2);
+
+        $this->assertEquals(ResponseHTTP::INTERNAL_SERVER_ERROR, $response->statusCode);
+        $this->assertIsArray($response->object);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testDeleteUnauthorized($instance) {
+        $instance->setToken(null);
+        $response = $instance->delete(0);
+        $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $response->statusCode);
+        $this->assertIsArray($response->object);
+    }
 }
 ?>

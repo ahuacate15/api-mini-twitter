@@ -119,5 +119,18 @@ class TweetDao extends Connection implements iTweetDao  {
             throw new \Exception("error al ejecutar la consulta", $code);
         }
     }
+
+    public function delete($idTweet) {
+        $sql = "delete from tweet where id_tweet = :idTweet";
+        $this->setQuery($sql);
+        $this->setInteger('idTweet', $idTweet);
+        $code = $this->execute();
+
+        if($code == Connection::OK) {
+            return $code;
+        } else {
+            throw new \Exception("error al ejecutar la consulta", $code);
+        }
+    }
 }
 ?>
