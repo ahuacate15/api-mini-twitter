@@ -1,6 +1,7 @@
 RewriteEngine on
 RewriteRule ^index?$ index.php
-RewriteRule  ^auth? src/controller/auth.php
+RewriteRule ^auth? src/controller/auth.php
 RewriteRule ^tweet? src/controller/tweet.php
+RewriteRule ^user? src/controller/user.php
 
 Options -Indexes

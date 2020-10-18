@@ -8,12 +8,19 @@ Los archivos son almacenados en la carpeta **test/** en donde se maneja la misma
 Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.php**. para ejecutar el script de prueba escribe el siguiente comando ``./vendor/bin/phpunit --configuration test/phpunit.xml test/`` en la carpeta raiz del proyecto
 
 ## Tabla de rutas
-### Autenticación de usuario
+### Autenticación
 
 | Método | Punto de acceso | Descripción |
 | --- | --- | --- |
 | POST | [``/auth/login``](#authlogin) | autorizar inicios de sesión |
 | POST | [``/auth/signup``](#authsignup) | registrar un usuario en la aplicación |
+
+### Usuario
+
+| Método | Punto de acceso | Autenticación | Descripción |
+| --- | --- | --- | --- |
+| GET | [``/user/profile``](#getuserprofile) | SI | consultar perfil de usuario |
+| PUT | [``/user/profile``](#putuserprofile) | SI | modificar perfil de usuario |
 
 ### Tweets
 
@@ -105,6 +112,88 @@ curl --location --request POST '127.0.0.1/api-mini-twitter/auth/signup' \
 **Estado 500 *INTERNAL SERVER ERROR***
 ```javascript
 { "message" : "error al registrar usuario" }
+```
+
+### GET /user/profile
+
+**Petición HTTP**
+```bash
+curl --location --request GET 'http://192.168.1.27/api-mini-twitter/user/profile' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNjAxNzQyNjc2LCJleHAiOjE2MTAzODI2NzYsImRhdGEiOnsiaWRVc2VyIjoiNzgiLCJ1c2VyTmFtZSI6ImNhcmxvcy5tZW5qaXZhciIsImVtYWlsIjoiY2FybG9zLm1lbmppdmFyQGdtYWlsLmNvbSJ9fQ.LDgCJdRXUMr4mYMS16ihL1TiFELcuoPjovwTNLOk2T94kCR-LdXC4D6TvOHePffbgU-QEymDpNiPDjsiJsyGIg'
+```
+
+**Estado 200 OK**
+```javascript
+{
+    "id_user": "78",
+    "user_name": "carlos.menjivar",
+    "created_date": "2020-08-15 23:14:17",
+    "email": "carlos.menjivar@gmail.com",
+    "role": "USER",
+    "name": "carlos",
+    "lastname": "menjivar",
+    "photo_url": "",
+    "genre": "m"
+}
+```
+
+**Estado 401 Unauthorized**
+```javascript
+{ "message" : "acceso denegado" }
+```
+
+### PUT /user/profile
+| Parámetro | Requerido | Descripción | Valores |
+| --- | --- | --- | --- |
+| field | SI | campo que se actualiza |user_name, email, name, lastname, genre |
+| value | SI | nuevo valor del campo |  |
+
+**Petición HTTP**
+```bash
+curl --location --request PUT 'http://127.0.0.1/api-mini-twitter/user/profile?field=genre&value=f' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJBUEktTUlOSS1UV0lUVEVSIiwiaWF0IjoxNjAxNzQyNjc2LCJleHAiOjE2MTAzODI2NzYsImRhdGEiOnsiaWRVc2VyIjoiNzgiLCJ1c2VyTmFtZSI6ImNhcmxvcy5tZW5qaXZhciIsImVtYWlsIjoiY2FybG9zLm1lbmppdmFyQGdtYWlsLmNvbSJ9fQ.LDgCJdRXUMr4mYMS16ihL1TiFELcuoPjovwTNLOk2T94kCR-LdXC4D6TvOHePffbgU-QEymDpNiPDjsiJsyGIg'
+```
+**Estado 200 OK**
+```javascript
+{ "message" : "usuario modificado" }
+```
+
+**Estadp 400 Bad request**
+```javascript
+{ "message" : "el nombre de usuario es requerido" }
+```
+
+```javascript
+{ "message" : "el formato de correo es incorrecto" }
+```
+
+al ingresar un campo inexistente
+```javascript
+{ "message" : "el campo no existe" }
+```
+
+**Estado 401 Unauthorized**
+```javascript
+{ "message" : "acceso denegado" }
+```
+
+**Estado 403 Conflict**
+```javascript
+{ "message" : "el usuario está en uso" }
+```
+
+```javascript
+{ "message" : "el correo está en uso" }
+```
+
+**Estado 500 Internal server error**
+```javascript
+{ "message" : "el campo es demasiado grande" }
+```
+
+error desconocido al actualizar los datos
+```javascript
+{ "message" : "error al actualizar campo" }
 ```
 
 ### /tweet

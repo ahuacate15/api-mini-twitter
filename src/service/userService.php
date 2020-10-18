@@ -8,11 +8,13 @@ class UserService {
     private $userDao;
     private $response;
     private $jwt;
+    private $token;
 
     public function __construct($userDao) {
         $this->userDao = $userDao;
         $this->response = new ResponseHTTP();
         $this->jwt = new JwtSecurity();
+        $this->token = null;
     }
 
     /**
@@ -77,6 +79,91 @@ class UserService {
             default:
                 return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al registrar usuario'));
         }
+    }
+
+    /**
+    * busco el perfil del usuario incluido en el token de seguridad
+    */
+    public function findProfileByUserNameToken() {
+        $jwtData = $this->jwt->validateToken($this->token);
+
+        if(!$jwtData) {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+        }
+
+        $userProfile = $this->userDao->findProfileById($jwtData->data->idUser);
+        if(!$userProfile) {
+            return $this->response->jsonResponse(ResponseHTTP::NOT_FOUND, array('message' => 'el usuario no existe'));
+        } else {
+            return $this->response->jsonResponse(ResponseHTTP::OK, $userProfile);
+        }
+    }
+
+    /**
+    * actualizo el perfil de un usuario, un campo a la vez
+    */
+    public function updateUserField($field, $value) {
+        $jwtData = $this->jwt->validateToken($this->token);
+
+        if(!$jwtData) {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+        }
+
+        $user = new UserEntity();
+        $user->setQueryResult($this->userDao->findProfileById($jwtData->data->idUser));
+
+        switch ($field) {
+            case 'user_name':
+                if($value != null && $value != '') {
+                    $user->userName = $value;
+                } else {
+                    return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'el nombre de usuario es requerido'));
+                }
+
+                break;
+            case 'email':
+                if(filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $user->email = $value;
+                } else {
+                    return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'el formato de correo es incorrecto'));
+                }
+            case 'name':
+                $user->name = $value;
+                break;
+            case 'lastname':
+                $user->lastname = $value;
+                break;
+            case 'genre':
+                $user->genre = $value;
+                break;
+            default:
+                return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'el campo no existe'));
+
+        }
+
+        try {
+            $code = $this->userDao->update($user);
+            return $this->response->jsonResponse(ResponseHTTP::OK, array('message' => 'usuario modificado'));
+        } catch(Exception $e) {
+            switch ($e->getCode()) {
+                case Connection::DUPLICATE_ROW:
+                    if($field == 'user_name') {
+                        return $this->response->jsonResponse(ResponseHTTP::CONFLICT, array('message' => 'el usuario está en uso'));
+                    } else if($field == 'email') {
+                        return $this->response->jsonResponse(ResponseHTTP::CONFLICT, array('message' => 'el correo está en uso'));
+                    } else {
+                        return $this->response->jsonResponse(ResponseHTTP::CONFLICT, array('message' => 'el campo está en uso'));
+                    }
+                case connection::DATA_TO_LONG:
+                    return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'el campo es demasiado grande'));
+                default:
+                    return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al actualizar campo'));
+            }
+        }
+    }
+
+    public function setToken($token) {
+        $this->token = $token;
     }
 }
 ?>

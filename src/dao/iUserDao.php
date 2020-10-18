@@ -8,5 +8,7 @@ interface iUserDao {
     */
     public function findByUserNameOrEmail($key);
     public function saveUser(UserEntity $userEntity);
+    public function findProfileById($idUser);
+    public function update(UserEntity $userEntity);
 }
 ?>

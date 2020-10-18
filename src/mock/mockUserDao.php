@@ -40,7 +40,36 @@ class MockUserDao {
         if($userEntity->email == 'admin@test.gob')
             return Connection::DUPLICATE_ROW;
         return Connection::OK;
+    }
 
+    public function findProfileById($idUser) {
+        $data = array(
+            1 => array(
+                'id_user' => 1,
+                'user_name' => 'admin',
+                'created_date' => '2020-08-15 23:14:17',
+                'name' => 'carlos',
+                'lastname' => 'menjivar',
+                'photo_url' => '',
+                'genre' => '',
+                'email' => 'admin@test.gob',
+                'role' => 'ADMIN'
+            )
+        );
+
+        return isset($data[$idUser]) ? $data[$idUser] : [];
+    }
+
+    public function update(UserEntity $userEntity) {
+        if($userEntity->email == 'carlos.itca@gmail.com') {
+            throw new \Exception("error al ejecutar la consulta", Connection::DUPLICATE_ROW);
+        }
+        if($userEntity->userName == 'carlos.menjivar') {
+            throw new \Exception("error al ejecutar la consulta", Connection::DUPLICATE_ROW);
+        }
+        if(strlen($userEntity->userName) > 35) {
+            throw new \Exception("error al ejecutar la consulta", Connection::DATA_TO_LONG);
+        }
     }
 }
 ?>

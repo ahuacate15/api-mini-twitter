@@ -3,6 +3,17 @@ use PHPUnit\Framework\TestCase;
 
 class userServiceTest extends TestCase {
 
+    private function getMockToken() {
+        $jwt = new JwtSecurity();
+        $user = new UserEntity();
+        $user->idUser = 1;
+        $user->userName = 'admin';
+        $user->email = 'admin@test.gob';
+
+        $jwtToken = $jwt->generateToken($user);
+        return $jwtToken;
+    }
+
     public function testInstance() {
         $instance = new UserService(new MockUserDao());
         $this->assertInstanceOf(UserService::class, $instance);
@@ -90,5 +101,108 @@ class userServiceTest extends TestCase {
         $this->assertEquals(ResponseHTTP::CONFLICT, $instance->signup('admin', 'genericmail@gmail.com', '12345')->statusCode);
         $this->assertEquals(ResponseHTTP::CONFLICT, $instance->signup('genericuser', 'admin@test.gob', '12345')->statusCode);
     }
+
+    /**
+    * @depends testInstance
+    */
+    public function testFindProfileByUserNameToken($instance) {
+        $utilHttp = new utilHTTP(array('Authorization' => 'Bearer '.$this->getMockToken()));
+        $instance->setToken($utilHttp->getJWT());
+        $this->assertEquals(ResponseHTTP::OK, $instance->findProfileByUserNameToken()->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testFindProfileByUserNameTokenUnauthorized($instance) {
+        $instance->setToken(null);
+        $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $instance->findProfileByUserNameToken()->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUpdateUserField($instance) {
+        $utilHttp = new utilHTTP(array('Authorization' => 'Bearer '.$this->getMockToken()));
+        $instance->setToken($utilHttp->getJWT());
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('user_name', 'admin')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('email', 'admin@test.gob')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('name', 'carlos')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('lastname', 'menjivar')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('genre', 'M')->statusCode);
+
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('name', '')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('name', null)->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('lastname', '')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('lastname', null)->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('genre', '')->statusCode);
+        $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('genre', null)->statusCode);
+
+        $this->assertEquals('usuario modificado', $instance->updateUserField('user_name', 'admin')->object['message']);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUpdateUserFieldEmptyUserName($instance) {
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('user_name', '')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('user_name', null)->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUpdateUserFieldInvalidEmail($instance) {
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('email', 'admin@test')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('email', 'admin')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('email', 'admin@test.')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('email', null)->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUpdateUserFieldInvalidFields($instance) {
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('', '')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('mail', '')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField(null, '')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField('', null)->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->updateUserField(null, null)->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUpdateUserFieldDuplicatedEmail($instance) {
+        /*
+        utilizo el token definido en el metodo getMockToken, para el usuario admin.
+        el correo carlos.itca@gmail.com se encuentra en uso por otro usuario. el service captura el error
+        */
+        $response = $instance->updateUserField('email', 'carlos.itca@gmail.com');
+        $this->assertEquals(ResponseHTTP::CONFLICT, $response->statusCode);
+        $this->assertEquals('el correo está en uso', $response->object['message']);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUpdateUserFieldDuplicatedUserName($instance) {
+        /*
+        utilizo el token definido en el metodo getMockToken, para el usuario admin.
+        el usuario carlos.menjivar se encuentra en uso por otro usuario. el service captura el error
+        */
+        $response = $instance->updateUserField('user_name', 'carlos.menjivar');
+        $this->assertEquals(ResponseHTTP::CONFLICT, $response->statusCode);
+        $this->assertEquals('el usuario está en uso', $response->object['message']);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testUpdateUserFieldValueToLong($instance) {
+        $response = $instance->updateUserField('user_name', 'carlos.eliseo.menjivar.ernesto.flores.beltran');
+        $this->assertEquals(ResponseHTTP::INTERNAL_SERVER_ERROR, $response->statusCode);
+    }
+
 }
 ?>
