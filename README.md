@@ -19,8 +19,8 @@ Al incluir una prueba unitaria incluir tu **archivo.php** ha **test/bootstrap.ph
 
 | Método | Punto de acceso | Autenticación | Descripción |
 | --- | --- | --- | --- |
-| GET | [``/user/profile``](#getuserprofile) | SI | consultar perfil de usuario |
-| PUT | [``/user/profile``](#putuserprofile) | SI | modificar perfil de usuario |
+| GET | [``/user/profile``](#get-userprofile) | SI | consultar perfil de usuario |
+| PUT | [``/user/profile``](#put-userprofile) | SI | modificar perfil de usuario |
 
 ### Tweets
 
