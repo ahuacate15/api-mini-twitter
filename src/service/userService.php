@@ -143,7 +143,8 @@ class UserService {
 
         try {
             $code = $this->userDao->update($user);
-            return $this->response->jsonResponse(ResponseHTTP::OK, array('message' => 'usuario modificado'));
+            $userProfile = $this->userDao->findProfileById($jwtData->data->idUser);
+            return $this->response->jsonResponse(ResponseHTTP::OK, $userProfile);
         } catch(Exception $e) {
             switch ($e->getCode()) {
                 case Connection::DUPLICATE_ROW:

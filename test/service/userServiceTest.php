@@ -138,7 +138,7 @@ class userServiceTest extends TestCase {
         $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('genre', '')->statusCode);
         $this->assertEquals(ResponseHTTP::OK, $instance->updateUserField('genre', null)->statusCode);
 
-        $this->assertEquals('usuario modificado', $instance->updateUserField('user_name', 'admin')->object['message']);
+        $this->assertIsArray($instance->updateUserField('user_name', 'admin')->object);
     }
 
     /**
