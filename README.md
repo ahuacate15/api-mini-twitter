@@ -1,6 +1,11 @@
 # API mini twitter
 
 ## Configuración de apache
+El directorio de los ficheros **uploads/** necesita los permisos necesarios para almacenar las imágenes de los usuarios.
+
+Cambia el propietario del directorio de archivos ``sudo chown -R www-data:www-data uploads/``
+
+Concede permisos de escritura ``sudo chmod +w uploads/``
 
 ## Pruebas unitarias
 Los archivos son almacenados en la carpeta **test/** en donde se maneja la misma estructura de carpetas que **src**.

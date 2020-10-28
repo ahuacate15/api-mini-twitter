@@ -163,6 +163,54 @@ class UserService {
         }
     }
 
+    public function uploadPhoto($image) {
+
+        $jwtData = $this->jwt->validateToken($this->token);
+
+        if(!$jwtData) {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado'));
+        }
+
+        if($image == null) {
+            return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'error al enviar la imagen'));
+        }
+
+        $uploads_dir = __DIR__.'/../../uploads/';
+        $tmp_name = $image["tmp_name"];
+        $name = basename($image["name"]);
+
+        /*
+        creo una carpeta por cada usuario, utilizando el ID del mismo ej. uploads/25/ o uploads/12/
+        con este if, verifico que la carpeta haya sido creada (si no existe) sin problemas
+        */
+        if(!file_exists($uploads_dir.'/'.$jwtData->data->idUser) && !mkdir($uploads_dir.'/'.$jwtData->data->idUser)) {
+            return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al almacenar la imagen'));
+        }
+
+        if(move_uploaded_file($tmp_name, $uploads_dir.'/'.$jwtData->data->idUser.'/'.$name)) {
+
+            $user = new UserEntity();
+            $user->setQueryResult($this->userDao->findProfileById($jwtData->data->idUser));
+
+            //la url no incluye el directorio uploads/
+            $user->photoUrl = $jwtData->data->idUser.'/'.$name;
+
+            try {
+                $this->userDao->update($user);
+                $userProfile = $this->userDao->findProfileById($jwtData->data->idUser);
+                return $this->response->jsonResponse(ResponseHTTP::OK, $userProfile);
+            } catch(Exception $e) {
+                return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al actualizar tu informacion'));
+            }
+
+
+        } else {
+            return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al subir imagen'));
+        }
+
+
+    }
+
     public function setToken($token) {
         $this->token = $token;
     }

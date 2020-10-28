@@ -28,6 +28,11 @@ $route->addRoute('PUT', '/user/profile', function($userService) {
     $userService->updateUserField($field, $value)->response();
 });
 
+$route->addRoute('POST', '/user/photo', function($userService) {
+    $image = isset($_FILES['picture']) ? $_FILES['picture'] : null;
+    $userService->uploadPhoto($image)->response();
+});
+
 $route->enroute();
 
 $method = $_SERVER['REQUEST_METHOD'];
