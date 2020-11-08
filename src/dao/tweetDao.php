@@ -15,9 +15,11 @@ class TweetDao extends Connection implements iTweetDao  {
             "   t.id_tweet, t.created_date, t.message, t.id_user, u.user_name, ".
             "   count(tl.id_tweet_like) as count_likes, ". //cantidad de likes del tweet
             "   count(tl.id_tweet_like) > 0 as my_like, ". //verifico si he dado like a este tweet
-            "   count(my_user.id_user) > 0 as my_tweet ". //verifico si soy el autor del tweet
+            "   count(my_user.id_user) > 0 as my_tweet, ". //verifico si soy el autor del tweet
+            "   ud.photo_url ".
             "from tweet t ".
             "inner join user u on u.id_user = t.id_user ".
+            "left join user_data ud on ud.id_user = u.id_user ".
             "left join tweet_like tl on tl.id_tweet = t.id_tweet and tl.id_user = u.id_user ".
             "left join tweet_like my_tl on  my_tl.id_tweet = t.id_tweet  and my_tl.id_user = :idUser ".
             "left join user my_user on my_user.id_user = u.id_user and u.id_user = :idUser ".

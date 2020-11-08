@@ -183,6 +183,7 @@ class UserService {
         creo una carpeta por cada usuario, utilizando el ID del mismo ej. uploads/25/ o uploads/12/
         con este if, verifico que la carpeta haya sido creada (si no existe) sin problemas
         */
+        
         if(!file_exists($uploads_dir.'/'.$jwtData->data->idUser) && !mkdir($uploads_dir.'/'.$jwtData->data->idUser)) {
             return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al almacenar la imagen'));
         }
@@ -193,7 +194,7 @@ class UserService {
             $user->setQueryResult($this->userDao->findProfileById($jwtData->data->idUser));
 
             //la url no incluye el directorio uploads/
-            $user->photoUrl = $jwtData->data->idUser.'/'.$name;
+            $user->photoUrl = 'uploads/'.$jwtData->data->idUser.'/'.$name;
 
             try {
                 $this->userDao->update($user);

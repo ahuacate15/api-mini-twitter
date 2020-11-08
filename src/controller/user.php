@@ -29,7 +29,7 @@ $route->addRoute('PUT', '/user/profile', function($userService) {
 });
 
 $route->addRoute('POST', '/user/photo', function($userService) {
-    $image = isset($_FILES['picture']) ? $_FILES['picture'] : null;
+    $image = isset($_FILES['image']) ? $_FILES['image'] : null;
     $userService->uploadPhoto($image)->response();
 });
 
