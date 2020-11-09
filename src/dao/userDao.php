@@ -9,7 +9,14 @@ class UserDao extends Connection implements iUserDao{
     }
 
     public function findByUserNameOrEmail($key) {
-        $sql = "select id_user, user_name, email, role, password_hash, created_date from user where user_name = :userName or email = :email";
+        $sql =
+            "select ".
+            "   u.id_user, u.user_name, u.email, ".
+            "   u.role, u.password_hash, u.created_date, ".
+            "   coalesce(ud.photo_url, '') as photo_url ".
+            "from user u ".
+            "left join user_data ud on u.id_user = ud.id_user ".
+            "where user_name = :userName or email = :email";
 
         $this->setQuery($sql);
         $this->setString('userName', $key);

@@ -29,6 +29,7 @@ class UserService {
 
         if(password_verify($password, $user['password_hash'])) {
             $userEntity = new UserEntity();
+
             $userEntity->idUser = $user['id_user'];
             $userEntity->userName = $user['user_name'];
             $userEntity->email = $user['email'];
@@ -39,6 +40,7 @@ class UserService {
                 'message' => 'inicio de sesion correcto',
                 'user_name' => $userEntity->userName,
                 'email' => $userEntity->email,
+                'photo_url' => $user['photo_url'],
                 'jwt' => $jwt
             ));
         } else {
@@ -183,7 +185,7 @@ class UserService {
         creo una carpeta por cada usuario, utilizando el ID del mismo ej. uploads/25/ o uploads/12/
         con este if, verifico que la carpeta haya sido creada (si no existe) sin problemas
         */
-        
+
         if(!file_exists($uploads_dir.'/'.$jwtData->data->idUser) && !mkdir($uploads_dir.'/'.$jwtData->data->idUser)) {
             return $this->response->jsonResponse(ResponseHTTP::INTERNAL_SERVER_ERROR, array('message' => 'error al almacenar la imagen'));
         }
