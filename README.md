@@ -33,4 +33,4 @@ chown -R www-data:www-data uploads/
 chmod +w uploads/
 ```
 
-Asegurate que el proyecto se encuentra en orden, corriendo las pruebas unitarias con el comando ``../vendor/bin/phpunit --configuration test/phpunit.xml test/``
+Asegurate que el proyecto se encuentra en orden, corriendo las pruebas unitarias con el comando ``./vendor/bin/phpunit --configuration test/phpunit.xml test/``
