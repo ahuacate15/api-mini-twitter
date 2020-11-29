@@ -28,6 +28,12 @@ $route->addRoute('POST', '/auth/signup', function($userService, $pathParams) {
     $userService->signup($userName, $email, $password)->response();
 });
 
+$route->addRoute('PUT', '/auth/password', function($userService) {
+    $oldPassword = isset($_REQUEST['old_password']) ? $_REQUEST['old_password'] : null;
+    $newPassword = isset($_REQUEST['new_password']) ? $_REQUEST['new_password'] : null;
+    $userService->changePassword($oldPassword, $newPassword)->response();
+});
+
 $route->setService($userService);
 $route->enroute();
 

@@ -12,21 +12,24 @@ class MockUserDao {
                 'user_name' => 'admin',
                 'email' => 'admin@test.gob',
                 'password_hash' => '$2y$10$IFAzzGLl7Gfz2xhEMrcaQ.irxDk7KaYtauS9NcxlXjaWNOF2dqmmK',
-                'created_date' => date('Y-m-d H:i:s')
+                'created_date' => date('Y-m-d H:i:s'),
+                'photo_url' => ''
             ),
             'admin@test.gob' => array(
                 'id_user' => 1,
                 'user_name' => 'admin',
                 'email' => 'admin@test.gob',
                 'password_hash' => '$2y$10$IFAzzGLl7Gfz2xhEMrcaQ.irxDk7KaYtauS9NcxlXjaWNOF2dqmmK',
-                'created_date' => date('Y-m-d H:i:s')
+                'created_date' => date('Y-m-d H:i:s'),
+                'photo_url' => ''
             ),
             'carlos.menjivar' => array(
                 'id_user' => 2,
                 'user_name' => 'carlos.menjivar',
                 'email' => 'carlos.itca@gmail.com',
                 'password_hash' => '$2y$10$IFAzzGLl7Gfz2xhEMrcaQ.irxDk7KaYtauS9NcxlXjaWNOF2dqmmK',
-                'created_date' => '2020-09-28 20:21:48'
+                'created_date' => '2020-09-28 20:21:48',
+                'photo_url' => ''
             )
         );
 
@@ -71,5 +74,7 @@ class MockUserDao {
             throw new \Exception("error al ejecutar la consulta", Connection::DATA_TO_LONG);
         }
     }
+
+    public function changePassword($userName, $passwordHash) {}
 }
 ?>

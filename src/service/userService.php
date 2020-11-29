@@ -83,6 +83,39 @@ class UserService {
         }
     }
 
+    public function changePassword($oldPassword, $newPassword) {
+
+        if($oldPassword == null || strlen($oldPassword) == 0) {
+            return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'falta el password original', 'code' => 1));
+        }
+
+        if($newPassword== null || strlen($newPassword) == 0) {
+            return $this->response->jsonResponse(ResponseHTTP::BAD_REQUEST, array('message' => 'falta el nuevo password', 'code' => 2));
+        }
+
+        $jwtData = $this->jwt->validateToken($this->token);
+
+        if(!$jwtData) {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'acceso denegado', 'code' => 3));
+        }
+
+        $user = $this->userDao->findByUserNameOrEmail($jwtData->data->userName);
+
+        if(!$user) {
+            return $this->response->jsonResponse(ResponseHTTP::NOT_FOUND, array('message' => 'el usuario no existe', 'code' => 4));
+        }
+
+        if(password_verify($oldPassword, $user['password_hash'])) {
+            //convierto el nuevo password en un hash
+            $newPasswordHash = password_hash($newPassword, CRYPT_BLOWFISH);
+
+            $this->userDao->changePassword($jwtData->data->userName, $newPasswordHash);
+            return $this->response->jsonResponse(ResponseHTTP::OK, 'credenciales actualizadas', 'code' => 0);
+        } else {
+            return $this->response->jsonResponse(ResponseHTTP::UNAUTHORIZED, array('message' => 'credenciales incorrectas', 'code' => 5));
+        }
+    }
+
     /**
     * busco el perfil del usuario incluido en el token de seguridad
     */

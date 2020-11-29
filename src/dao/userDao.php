@@ -91,5 +91,16 @@ class UserDao extends Connection implements iUserDao{
 
         return $code;
     }
+
+    public function changePassword($userName, $passwordHash) {
+        $sql =
+            "update user set password_hash = :password_hash ".
+            "where user_name = :userName";
+        $this->setQuery($sql);
+        $this->setString('userName', $userName);
+        $this->setString('passwordHash', $passwordHash);
+
+        $this->execute();
+    }
 }
 ?>

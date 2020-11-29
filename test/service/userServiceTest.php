@@ -74,7 +74,8 @@ class userServiceTest extends TestCase {
                 'user_name' => 'carlos.menjivar',
                 'email' => 'carlos.itca@gmail.com',
                 'id_user' => 2,
-                'created_date' => '2020-09-28 20:21:48'
+                'created_date' => '2020-09-28 20:21:48',
+                'photo_url' => ''
             ),
             $response->object
         );
@@ -202,6 +203,30 @@ class userServiceTest extends TestCase {
     public function testUpdateUserFieldValueToLong($instance) {
         $response = $instance->updateUserField('user_name', 'carlos.eliseo.menjivar.ernesto.flores.beltran');
         $this->assertEquals(ResponseHTTP::INTERNAL_SERVER_ERROR, $response->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testChangePassword($instance) {
+        $utilHttp = new utilHTTP(array('Authorization' => 'Bearer '.$this->getMockToken()));
+        $instance->setToken($utilHttp->getJWT());
+
+        /* credeciales correctas */
+        $this->assertEquals(ResponseHTTP::OK, $instance->changePassword('12345', '12345')->statusCode);
+
+        /* credenciales incorrectas */
+        $this->assertEquals(ResponseHTTP::UNAUTHORIZED, $instance->changePassword('54321', '12345')->statusCode);
+    }
+
+    /**
+    * @depends testInstance
+    */
+    public function testChangePasswordWithoutParams($instance) {
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->changePassword(null, null)->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->changePassword(null, '')->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->changePassword('', null)->statusCode);
+        $this->assertEquals(ResponseHTTP::BAD_REQUEST, $instance->changePassword('', '')->statusCode);
     }
 
 }

@@ -10,5 +10,6 @@ interface iUserDao {
     public function saveUser(UserEntity $userEntity);
     public function findProfileById($idUser);
     public function update(UserEntity $userEntity);
+    public function changePassword($userName, $passwordHash);
 }
 ?>
